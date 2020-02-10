@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JSSample</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  </head>
+  <main>
+    <div class="container" style="text-align: center;">
+        <label for="Comments">Enter Text Here</label><br/>
+        <div style="padding: 20px;">
+            <textarea name="comments" id="comments" style="width: 50%;" cols="30" rows="10"></textarea>
+        </div>
+      <button id="submit">Submit</button>
+      <div style="padding: 20px;">
+        <textarea name="commentsReview" readonly disabled id="commentsReview" style="width: 100%;" cols="30" rows="10"></textarea></br>
+    </div>
+    </div>
+  </main>
+  <body>
+    <script type="text/javascript">
+      const button = document.getElementById("submit");
+      if (button)
+        button.addEventListener("click", function() {
+          const text = document.getElementById("comments").value;
+          getFilteredContent(text);
+        });
+
+      function getFilteredContent(text) {
+        var params = {
+          // Request parameters
+          autocorrect: "True",
+          PII: "False",
+          listId: "0",
+          classify: "True",
+          language: "eng"
+        };
+
+        $.ajax({
+          url:
+            "https://test-moderation.cognitiveservices.azure.com/contentmoderator/moderate/v1.0/ProcessText/Screen?" +
+            $.param(params),
+          beforeSend: function(xhrObj) {
+            // Request headers
+            xhrObj.setRequestHeader("Content-Type", "text/plain");
+            xhrObj.setRequestHeader(
+              "Ocp-Apim-Subscription-Key",
+              "8b211180b3ce440f8836fdcee2fedf1c"
+            );
+          },
+          type: "POST",
+          // Request body
+          data: text
+        })
+          .done(function(data) {
+            alert("success");
+            document.getElementById('commentsReview').value =  JSON.stringify(data);
+          })
+          .fail(function() {
+            alert("error");
+          });
+      }
+    </script>
+  </body>
+</html>
